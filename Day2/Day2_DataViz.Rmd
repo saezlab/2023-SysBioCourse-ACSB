@@ -1,0 +1,118 @@
+---
+title: 'Day 2: Data Visualization'
+author: "Ricardo Ramirez [roramirezf@uni-heidelberg.de]"
+date: "6/27/2022"
+output: html_document
+---
+
+Today we will work on data exploration/visualization and the benefits it has to shape your research objectives.
+
+
+Omics experiments are characterized by a large collection of measurements (sometimes called features) that represent a biological aspect of interest of your model system in predetermined scales (whole tissue, single cell, etc.). 
+
+While data generation is usually coupled to a hypothesis, one of the most important parts of today's computational biological work relies on effective visualization of the characteristics of your data. [Other researchers](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02133-w) have touched this topic in detail. 
+
+## Consensus Transcriptional Landscape of Human Heart Failure
+
+For today's practical, we will rely on the data curated by Ramirez Flores and Lanzer *et. al.* from the following [publication](https://www.ahajournals.org/doi/full/10.1161/JAHA.120.019667?rfr_dat=cr_pub++0pubmed&url_ver=Z39.88-2003&rfr_id=ori%3Arid%3Acrossref.org). In this work, the authors curated 16 different transcriptomic studies of human end-stage heart failure, compared their distinct disease signals and performed a meta-analysis. 
+
+In groups of two or three persons you will need to pick at least  of the 16 studies provided in the [Zenodo repository](https://zenodo.org/record/3797044#.YrdY5-xBwn0) and perform an exploratory analysis of the experiments. Each curated dataset contains the expression profile of failing and non-failing hearts associated with an annotation table that provides information about the patients from which the specimens where generated.
+
+**By the end of the session, you will have to prepare a 5 minute presentation describing the experiment that you decided to pick.**
+
+Here you have some ideas of what to explore in your data or the whole object:
+
+a) What is the size of the experiments? (Barplots, boxplots)
+
+b) What is the distribution of gene coverage among all experiments?
+
+c) How many failing and non-failing hearts are in the experiment you picked? (Barplots)
+
+d) Which meta data variables are reported for each patient within your data set?
+
+e) What is the distribution of gene expression between all the patients in your experiment?
+
+f) Perform a principal component analysis and project the patients in the first two principal components. How much variance do they represent?
+
+g) Pick one of the genes in Figure S8 (eg. NPPA or NPPB) and show the distribution of expression between the 2 groups.
+
+
+## Description of the object
+
+Download the data folder and import the following object in your R session adjusting for the exact path in your computer.
+
+```
+reheat <- readRDS("PATH_TO_DOWNLOAD/data/METAheart.rds")
+```
+
+This object is a list of experiments indexed by ID that contains three main elements:
+
+a) Normalized gene expression (either voom transformed for RNA-seq experiments or Robust Multiarray Averaging for microarrays, don't worry too much about this, but look at the distribution of gene expression)
+
+```
+exp1 <- reheat[[1]][["GEX"]]
+```
+
+b) Meta-data associated to the experiment
+
+```
+exp1_meta <- reheat[[1]][["TARGETS"]]
+```
+
+c) Results from differential expression analysis within the experiment that compares heart failure patients from healthy donor hearts.
+
+```
+exp1_meta <- reheat[[1]][["HF_limma"]]
+```
+
+We have created this instance in case you can't work in your local computer, run the first chunk of code to install all necessary packages and then let's start palying around with data.
+
+```{r, eval=F}
+install.packages("R.utils")
+install.packages("tidyverse")
+install.packages("BiocManager")
+install.packages("cowplot")
+
+library("R.utils")
+library("tidyverse")
+```
+
+
+```{r, eval=F}
+download.file("https://www.dropbox.com/s/o9q3c57cqyopuju/METAheart.rds?dl=1", 
+              "METAheart.rds")
+
+reheat <- readRDS("METAheart.rds")
+```
+
+## Code cheat sheet
+
+In the following section I give you some tips for easy manipulation and quantification of the data
+
+## Easy transformation of lists to data frames using tidy
+
+```
+# To make lists into data frames or tibbles
+reheat_df <- map(reheat, enframe, name = "element") %>% enframe(name = "study") %>% unnest()
+
+# Check the number of genes per study
+
+reheat_df %>% 
+dplyr::filter(element == "GEX") %>% 
+mutate(ngenes = map_int(value, nrow))
+
+# Check the number of HF patients
+
+reheat_df %>% dplyr::filter(element == "TARGETS") %>% 
+unnest() %>% 
+group_by(study, HeartFailure) %>% 
+summarize(n_pats = n())
+
+# Perform Principal Component Analysis
+
+prcomp(reheat$Kim16$GEX)
+```
+
+## Plotting
+
+ggplot offers versatile plotting from data frames, you may use ```geom_boxplot()```, ```geom_point()```, ```geom_bar()```, ```geom_hist()```, etc. Ask the teaching assistant for tips and code chunks if needed.

@@ -1,0 +1,50 @@
+---
+title: 'Day 3: Experimental design and hypothesis testing'
+author: "Ricardo Ramirez [roramirezf@uni-heidelberg.de]"
+date: "6/27/2022"
+output: html_document
+---
+
+Following your work from yesterday, today we will have discussions regarding the experimental design of the experiments from the heart failure meta-analysis. 
+
+1. Can you describe what's the original question so as to generate the data from the experimeent you chose?
+
+2. Can you mention what are the distinct factor or levels inside your experiment?
+
+3. What's the experimental unit from your data?
+
+4. Why is it dangerous that researchers don't report full characteristics of the patient cohort they analyze?
+
+5. Asssume you had to design your own data set, no limits in money, you can use multiple tissue banks, how would you approach this problem?
+
+6. In which circumstances experimental design can be more or less controlled?
+
+7. Pick a study that has sex information and perform a PCA, color the samples by heart failure condition and sex, what do you observe? How would you quantify this observation?
+
+8. Merge two or more studies and perform a PCA on the expression matrix, what happens? 
+
+9. Repeat the same task as above, but before performing a PCA, center and standardize each gene. You can use R's ```scale()``` function. What happens? Why do you think the results are so different?
+
+10. How would you perform differential expression analysis in a single study? Can you define these question in terms of a hypothesis test? Any tests you know of? Pick 10 random genes and test if there's a difference in expression between heart failure patients and healthy donors.
+
+11. Pick a single study and scan the differential expression analysis slot from the provided data set, bassed on our discussions, pick the top 10 up and downregulated genes and make a heatmap with them.
+
+Use this instance to have useful packages
+
+```{r, eval=F}
+install.packages("tidyverse")
+install.packages("BiocManager")
+install.packages("R.utils")
+install.packages("tidyverse")
+install.packages("BiocManager")
+install.packages("cowplot")
+BiocManager::install("limma")
+```
+
+```{r, eval=F}
+download.file("https://www.dropbox.com/s/o9q3c57cqyopuju/METAheart.rds?dl=1", 
+              "METAheart.rds")
+              
+reheat <- readRDS("METAheart.rds")
+```
+
