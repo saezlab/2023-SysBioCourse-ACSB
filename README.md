@@ -1,4 +1,4 @@
-# 2022-SysBioCourse-ACSB
+# 2023-SysBioCourse-ACSB
 
 Teaching material for 2022 SysBio Course
 
