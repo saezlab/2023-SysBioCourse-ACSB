@@ -1,6 +1,6 @@
 # 2023-SysBioCourse-ACSB
 
-Teaching material for 2022 SysBio Course
+Teaching material for 2023 SysBio Course
 
 Links to google collab instances
 
